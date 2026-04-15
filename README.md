@@ -53,7 +53,7 @@ This project wasn't just about writing a contract — it was about **end-to-end 
 If you'd like to clone or fork the project:
 
 ```bash
-git clone https://github.com/barnabasmunuhe/crowdfunding-smart-contract.git
+git clone https://github.com/barnabasmunuhe/Lottery_Smart_Contract.git
 cd raffle-smart-contract
 forge install
 forge build
