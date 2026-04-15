@@ -1,92 +1,231 @@
-# 🎲 Raffle Smart Contract
+# 🎰 Raffle Smart Contract (Production Upgrade Roadmap)
 
-This project is a decentralized **Raffle (Lottery) smart contract** developed using **Solidity** and the **Foundry** development suite. It showcases the integration of secure random number generation using **Chainlink VRF**, full test coverage with Foundry, and deployment to Ethereum testnets.
-
-> 🛠 This is part of my ongoing exploration of advanced smart contract development and infrastructure — improvements are already in the pipeline!
+A decentralized, automated lottery system built with Solidity and Foundry, leveraging Chainlink VRF for verifiable randomness and Chainlink Automation for trustless execution.
 
 ---
 
-## 🧠 Project Overview
+## 📌 Current State (v1 - Functional Prototype)
 
-The Raffle contract allows users to enter a lottery by sending a fixed ETH amount. At predefined intervals, the contract uses Chainlink's Verifiable Random Function (VRF) to select a random winner and sends them the prize pool.
+This contract is a **fully working decentralized raffle system** with the following capabilities:
 
-### Key Features:
-
-- ✅ Entry mechanism with ETH transfer
-- ✅ Chainlink VRF integration for secure randomness
-- ✅ Automated upkeep (Chainlink Keepers support planned)
-- ✅ Access control for sensitive functions
-- ✅ Gas usage analysis & optimization
-- ✅ Full test coverage (unit + forked)
-
----
-
-## 🧪 What I Built
-
-This project wasn't just about writing a contract — it was about **end-to-end engineering**. Here's what went into it:
-
-| Layer                       | Description                                                           |
-| --------------------------- | --------------------------------------------------------------------- |
-| 🔐 **Solidity Contract**     | Handles entries, random winner selection, and ETH transfers           |
-| 🧪 **Testing Suite**         | Built with Forge: unit tests, forked simulations, fuzzing, assertions |
-| ⚙️ **Deployment Scripts**    | Scripts for automated deployment & verification                       |
-| 🌐 **Chainlink Integration** | Used VRFv2.5 for secure randomness (testnet verified)                 |
-| ⛽ **Gas Snapshotting**      | Benchmarked costs of critical functions using `forge snapshot`        |
-| 🧱 **Future Scope**          | Planning frontend integration & support for multiple rounds           |
+### ✅ Core Features
+- Users enter raffle by paying ETH
+- Players stored on-chain
+- Automated winner selection using Chainlink VRF v2.5
+- Time-based execution using Chainlink Automation
+- Automatic payout to winner
+- Contract resets for next round
 
 ---
 
-## 🧰 Tools & Stack
+## ⚙️ Architecture Overview
 
-- **Solidity** (v0.8.x)
-- **Foundry** (Forge, Anvil, Cast)
-- **Chainlink VRF**
-- **Sepolia Testnet**
-- **Etherscan Verification**
-- **dotenv for secrets**
-- **GitHub Actions** (planned CI)
+### 🔁 Flow
+1. `enterRaffle()` → users join
+2. `checkUpkeep()` → verifies conditions
+3. `performUpkeep()` → requests randomness
+4. `fulfillRandomWords()` → picks winner + pays out
 
 ---
 
-## ⚡ Try It Out
+## 🧪 Testing Coverage
 
-If you'd like to clone or fork the project:
+- Unit tests using Foundry
+- VRF mock integration
+- Event emission verification
+- Time manipulation (`warp`, `roll`)
+- Winner payout validation
 
-```bash
-git clone https://github.com/barnabasmunuhe/Lottery_Smart_Contract.git
-cd raffle-smart-contract
-forge install
-forge build
-forge test
-```
-To deploy, you'll need your testnet RPC and wallet private key.
+---
 
-🔭 Improvements in Progress
-I'm actively improving this contract to include:
+## 🚀 Deployment
 
-🧾 Custom errors for gas optimization
+- Scripted deployment using Foundry
+- Chainlink VRF subscription creation + funding
+- Consumer registration handled automatically
 
-🔄 Full Chainlink Keepers integration (automated draws)
+---
 
-📤 Event logs for frontend compatibility
+## ⚠️ Known Issues / Limitations
 
-🧩 Enum-based lifecycle control
+- ❌ Incorrect entrance fee validation logic (`>=` instead of `<`)
+- ❌ Single winner only
+- ❌ No refund mechanism
+- ❌ No emergency controls (pause/kill switch)
+- ❌ No round history tracking
+- ❌ Push-based payout (reentrancy risk surface)
+- ❌ Limited frontend query support
 
-🛡 Advanced security patterns (try/catch, fallback logic)
+---
 
-🧪 Hardhat compatibility for frontend devs
+## 🧠 Design Philosophy (Upgrade Direction)
 
-📸 Sneak Peek (Coming Soon)
-A simple frontend UI for testing the raffle on Sepolia, built with React & ethers.js.
+This project is evolving from:
 
-👨‍💻 About Me
-I’m Barnabas M., a smart contract developer focused on building practical, production-ready DApps with a deep understanding of Ethereum infrastructure. This project was part of my growth journey through the Cyfrin Updraft course and beyond.
+> **Working Prototype → Production-Grade Protocol**
 
-🌐 My GitHub
+### Focus Areas:
+- Security-first design
+- Gas efficiency
+- Fault tolerance
+- Observability (events + state)
+- Extensibility
 
-📫 Reach me via LinkedIn or email
+---
 
-📜 License
-This project is open source under the MIT license.
+## 🛠️ Upgrade Roadmap
 
-✨ Thanks for checking out my work. More smart contracts and DeFi experiments are on the way!
+### 🔹 Phase 1: Stability & Bug Fixes
+- Fix entrance fee validation logic
+- Add strict input validation
+- Standardize revert patterns
+
+---
+
+### 🔹 Phase 2: Feature Enhancements
+
+#### 🎯 Multi-Winner Support
+- Select multiple winners
+- Flexible reward distribution
+
+#### 📜 Raffle History
+Store previous rounds:
+- Winner
+- Prize
+- Timestamp
+
+#### 👥 Player Constraints
+- Max players per round
+- Optional per-wallet limits
+
+---
+
+### 🔹 Phase 3: Security Hardening
+
+#### 🔐 Reentrancy Protection
+- Use `ReentrancyGuard`
+- Consider pull-payment model
+
+#### 🛑 Emergency Controls
+- Add `pause()` / `unpause()`
+- Circuit breaker pattern
+
+#### 🧱 Access Control
+- Introduce `Ownable` / `AccessControl`
+
+---
+
+### 🔹 Phase 4: Economic & Game Design
+
+#### 💰 Dynamic Entry Fee
+- Adjust based on demand or round size
+
+#### 🎲 Weighted Entries (Optional)
+- Higher ETH → higher win probability
+
+#### 🪙 Protocol Fee
+- Small fee for sustainability
+
+---
+
+### 🔹 Phase 5: Gas Optimization
+
+- Reduce storage writes
+- Pack variables efficiently
+- Evaluate array vs mapping tradeoffs
+
+---
+
+### 🔹 Phase 6: Advanced Testing
+
+#### 🔥 Fuzz Testing
+- Randomized inputs
+- Edge case discovery
+
+#### 🔁 Invariant Testing
+Ensure:
+- No stuck funds
+- Valid state transitions
+
+#### 🌐 Fork Testing
+- Simulate real Chainlink environment
+
+---
+
+### 🔹 Phase 7: Observability & UX
+
+Add helper view functions:
+- `getNumberOfPlayers()`
+- `getTimeRemaining()`
+- `getCurrentPrizePool()`
+
+Improve events:
+- Round start/end
+- Prize distribution
+
+---
+
+### 🔹 Phase 8: Production Readiness
+
+#### 📦 Upgradeability (Optional)
+- Proxy pattern (UUPS / Transparent)
+
+#### 🔗 Multi-Chain Support
+- Config-based deployments
+
+#### 🧾 Documentation
+- Full NatSpec coverage
+- Developer-facing docs
+
+---
+
+## 🧪 Testing Strategy
+
+| Layer       | Purpose               |
+| ----------- | --------------------- |
+| Unit        | Function correctness  |
+| Integration | Contract interactions |
+| Fork        | Real-world simulation |
+| Fuzz        | Random robustness     |
+| Invariant   | System guarantees     |
+
+---
+
+## 🎯 Long-Term Vision
+
+Transform into a **modular raffle protocol**:
+
+- Pluggable randomness providers
+- Configurable game logic
+- DAO governance
+- Frontend + analytics dashboard
+
+---
+
+## 📍 Development Strategy
+
+- Build **one feature at a time**
+- Write tests **before implementation**
+- Refactor after validation
+- Keep contracts maintainable and modular
+
+---
+
+## 👨‍💻 Author
+
+**Barnabas Mwangi**  
+Smart Contract Developer | Blockchain Engineer
+
+---
+
+## 🧠 Final Note
+
+This is more than a raffle.
+
+It’s a system designed to master:
+- Oracle integrations
+- Automation systems
+- Secure fund handling
+- Protocol-level engineering
+
+> Treat every upgrade like it’s going to mainnet.
